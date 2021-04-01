@@ -8,6 +8,8 @@ const model = {
         return this.table.get('index')
     },
 
+    getCurrentIndex: () => this.table.get('index'),
+
     setUserById: (index, user) => this.table.set(`user_${index}`, user),
     getUserById: (index) => this.table.get(`user_${index}`),
 

@@ -25,19 +25,19 @@ const control = {
             authorIcon: defaultIcon,
             fields: [
                 {
-                    name: '>set [name] [emoji]',
+                    name: '$set [name] [emoji]',
                     value: `link an emoji to a name`,
                 },
                 {
-                    name: '>random [phrase]',
+                    name: '$random [phrase]',
                     value: `sends a VS [phrase] with 2 random names`,
                 },
                 {
-                    name: '>random [number] [phrase]',
+                    name: '$random [number] [phrase]',
                     value: `sends a VS [phrase] with [number] random names`,
                 },
                 {
-                    name: '>clear',
+                    name: '$clear',
                     value: `clear all names`,
                 },
             ],
@@ -69,7 +69,7 @@ const control = {
 
         this.bot.messageChannel({
             embed: true,
-            authorName: `Azuria Support Bot`,
+            authorName: defaultUser,
             authorIcon: defaultIcon,
             color: colors.green,
             channelId: channelId,
@@ -78,14 +78,70 @@ const control = {
                 {
                     name: 'name',
                     value: `${name}`,
+                    inline: true,
                 },
                 {
                     name: 'emoji',
                     value: `${emoji}`,
+                    inline: true,
                 },
             ],
             attachments: null,
         })
+    },
+
+    onReceiveRandomMsg: async (message) => {
+        const gameChannelId = secret.GAME_CHANNEL
+
+        const msgArray = message.content.split(' ')
+
+        const defaultSettings = isNaN(msgArray[1])
+        const question = defaultSettings
+            ? msgArray.slice(1).join(' ')
+            : msgArray.slice(2).join(' ')
+        const nbPlayers = defaultSettings ? 2 : msgArray[1]
+
+        console.log('question', question)
+        console.log('nbPlayers', nbPlayers)
+
+        const current = model.getCurrentIndex()
+
+        let players = []
+        for (let i = 0; i < nbPlayers; i++) {
+            let playerIndex
+            do {
+                playerIndex = 1 + Math.floor(Math.random() * (current))
+            } while (players.includes(playerIndex))
+            players[i] = playerIndex
+        }
+
+        console.log('players', players)
+
+        const fields = []
+        const emojis = []
+        players.forEach((index) => {
+            const currentPlayer = model.getUserById(index)
+            fields.push({
+                name: currentPlayer.name,
+                value: currentPlayer.emoji,
+                inline: true,
+            })
+            emojis.push(currentPlayer.emoji)
+        })
+
+        this.bot.messageChannelWithReactions({
+            embed: true,
+            authorName: defaultUser,
+            authorIcon: defaultIcon,
+            color: colors.green,
+            channelId: gameChannelId,
+            description: question,
+            fields: fields,
+            attachments: null,
+            reactions: emojis,
+        })
+
+        message.react('☑️')
     },
 }
 module.exports = control

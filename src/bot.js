@@ -47,6 +47,23 @@ const bot = {
         }
 
     },
+    
+    messageChannelWithReactions: ({ channelId, attachments = null, reactions, ...props }) => {
+       
+        const msg = createMsg({...props})
+        
+        this.bot.guild.channels.cache.get(channelId).send(msg).then(sent => {
+            reactions.forEach(reaction => {
+                sent.react(reaction)
+            });
+        })
+
+        if (attachments && attachments.first() !== undefined){
+            const attachment = new MessageAttachment(attachments.first().url)
+            this.bot.guild.channels.cache.get(channelId).send(attachment)
+        }
+
+    },
 
 }
 
