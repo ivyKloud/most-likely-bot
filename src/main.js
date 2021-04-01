@@ -25,13 +25,13 @@ client.on('ready', () => {
 
 client.on('message', (message) => {
     if (message.guild.id == secret.GUILD_ID && !message.author.bot) {
-        if (message.content.startsWith('>set')) {
+        if (message.content.startsWith('$set')) {
             control.onReceiveSetMsg(message)
         // } else if (message.content.startsWith('>random')) {
         //     control.onReceiveRandomMsg(message)
         // } else if (message.content.startsWith('>clear')) {
         //     control.onReceiveClearMsg(message)
-        } else if (message.content.startsWith('>help')) {
+        } else if (message.content.startsWith('$help')) {
             control.onReceiveHelpMsg(message)
         }
         console.log('----------------')

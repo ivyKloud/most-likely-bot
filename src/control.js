@@ -43,5 +43,49 @@ const control = {
             ],
         })
     },
+
+    onReceiveSetMsg: async (message) => {
+        const channelId = message.channel.id
+
+        const msgArray = message.content.split(' ')
+
+        const name = msgArray[1]
+        const emoji = msgArray[2]
+
+        const user = {
+            name: name,
+            emoji: emoji,
+        }
+
+        const id = model.getIdByName(name)
+
+        if (id) {
+            model.setUserById(id, user)
+        } else {
+            const newId = await model.getNextIndex()
+            model.setUserById(newId, user)
+            model.setIdByName(newId, name)
+        }
+
+        this.bot.messageChannel({
+            embed: true,
+            authorName: `Azuria Support Bot`,
+            authorIcon: defaultIcon,
+            color: colors.green,
+            channelId: channelId,
+            title: id ? 'Player edited' : 'New player added',
+            fields: [
+                {
+                    name: 'name',
+                    value: `${name}`,
+                },
+                {
+                    name: 'emoji',
+                    value: `${emoji}`,
+                },
+            ],
+            attachments: null,
+        })
+    },
 }
 module.exports = control
