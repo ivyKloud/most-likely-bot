@@ -13,7 +13,7 @@ const control = {
         this.bot = bot
         model.setTable(new db.table('MostLikely'))
     },
-
+    
     onReceiveHelpMsg: async (message) => {
         const channelId = message.channel.id
         console.log(channelId)
@@ -142,6 +142,10 @@ const control = {
         })
 
         message.react('☑️')
+    },
+    
+    onReceiveClearMsg: async () => {
+        model.clearDb()
     },
 }
 module.exports = control

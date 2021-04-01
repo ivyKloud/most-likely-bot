@@ -29,8 +29,8 @@ client.on('message', (message) => {
             control.onReceiveSetMsg(message)
         } else if (message.content.startsWith('$random')) {
             control.onReceiveRandomMsg(message)
-        // } else if (message.content.startsWith('>clear')) {
-        //     control.onReceiveClearMsg(message)
+        } else if (message.content.startsWith('$clear')) {
+            control.onReceiveClearMsg()
         } else if (message.content.startsWith('$help')) {
             control.onReceiveHelpMsg(message)
         }

@@ -3,6 +3,14 @@ const model = {
     setTable: (table) => {
         this.table = table
     },
+
+    clearDb: () => {
+        const all = this.table.all()
+
+        all.forEach(({ ID }) => {
+            this.table.delete(ID)
+        })
+    },
     getNextIndex: async () => {
         await this.table.add('index', 1)
         return this.table.get('index')
@@ -15,7 +23,6 @@ const model = {
 
     setIdByName: (index, name) => this.table.set(`userId_${name}`, index),
     getIdByName: (name) => this.table.get(`userId_${name}`),
-
 }
 
 module.exports = model
