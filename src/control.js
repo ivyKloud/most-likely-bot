@@ -16,7 +16,7 @@ const control = {
     
     onReceiveHelpMsg: async (message) => {
         const channelId = message.channel.id
-        console.log(channelId)
+
         this.bot.messageChannel({
             embed: true,
             channelId: channelId,

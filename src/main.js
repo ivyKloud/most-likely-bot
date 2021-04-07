@@ -2,6 +2,7 @@ const { Client } = require('discord.js')
 
 const { bot } = require('./bot')
 const control = require('./control')
+const misc = require('./misc')
 
 const secret = require('../secret.json')
 
@@ -24,16 +25,26 @@ client.on('ready', () => {
 })
 
 client.on('message', (message) => {
-    if (message.guild.id == secret.GUILD_ID && !message.author.bot) {
-        if (message.content.startsWith('$set')) {
-            control.onReceiveSetMsg(message)
-        } else if (message.content.startsWith('$random')) {
-            control.onReceiveRandomMsg(message)
-        } else if (message.content.startsWith('$clear')) {
-            control.onReceiveClearMsg()
-        } else if (message.content.startsWith('$help')) {
-            control.onReceiveHelpMsg(message)
+    const isMentioned = message.mentions.users.some(
+        (user) => user.id === client.user.id
+    )
+    if (!message.author.bot) {
+        if (message.guild.id == secret.GUILD_ID) {
+            if (message.content.startsWith('$set')) {
+                control.onReceiveSetMsg(message)
+            } else if (message.content.startsWith('$random')) {
+                control.onReceiveRandomMsg(message)
+            } else if (message.content.startsWith('$clear')) {
+                control.onReceiveClearMsg()
+            } else if (message.content.startsWith('$help')) {
+                control.onReceiveHelpMsg(message)
+            }
+            console.log('----------------')
         }
-        console.log('----------------')
+
+        if (isMentioned) {
+            misc.onReceiveMention(message)
+        }
+        misc.onReceiveMsg(message)
     }
 })
