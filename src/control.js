@@ -2,6 +2,7 @@ const model = require('./model')
 const db = require('quick.db')
 
 const secret = require('../secret.json')
+// const secret = require('../secret_ivy.json')
 const colors = require('./helpers/colors')
 
 const defaultIcon = 'https://i.imgur.com/AsYSVWe.png'
@@ -13,7 +14,7 @@ const control = {
         this.bot = bot
         model.setTable(new db.table('MostLikely'))
     },
-    
+
     onReceiveHelpMsg: async (message) => {
         const channelId = message.channel.id
 
@@ -37,9 +38,17 @@ const control = {
                     value: `sends a VS [phrase] with [number] random names`,
                 },
                 {
-                    name: '$clear',
-                    value: `clear all names`,
+                    name: '$list',
+                    value: `list all names and emojis`,
                 },
+                {
+                    name: '$list id',
+                    value: `list all ids, names and emojis`,
+                },
+                {
+                    name: '$remove [id]',
+                    value: `remove a name by its id`,
+                }
             ],
         })
     },
@@ -110,7 +119,7 @@ const control = {
         for (let i = 0; i < nbPlayers; i++) {
             let playerIndex
             do {
-                playerIndex = 1 + Math.floor(Math.random() * (current))
+                playerIndex = 1 + Math.floor(Math.random() * current)
             } while (players.includes(playerIndex))
             players[i] = playerIndex
         }
@@ -143,7 +152,38 @@ const control = {
 
         message.react('☑️')
     },
-    
+
+    onReceiveListMsg: async (message) => {
+        const channelId = message.channel.id
+        const users = model.getAllUsers()
+
+        const msgArray = message.content.split(' ')
+        const showId = msgArray[1] !== undefined && msgArray[1] === 'id'
+
+        this.bot.messageChannel({
+            embed: true,
+            channelId: channelId,
+            color: colors.purple,
+            authorName: defaultUser,
+            authorIcon: defaultIcon,
+            fields: users.map((user) => ({
+                name: showId ? `${user.id} - ${user.name}` : user.name,
+                value: user.emoji,
+                inline: true,
+            })),
+        })
+    },
+
+    onReceiveRemoveMsg: async (message) => {
+        const userId = message.content.split(' ')[1]
+        if (!isNaN(userId)) {
+            const user = model.getUserById(userId)
+            model.removeIdByName(user.name)
+            model.removeUserById(userId)
+            message.react('☑️')
+        }
+    },
+
     onReceiveClearMsg: async () => {
         model.clearDb()
     },

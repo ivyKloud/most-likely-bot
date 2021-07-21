@@ -5,6 +5,7 @@ const control = require('./control')
 const misc = require('./misc')
 
 const secret = require('../secret.json')
+// const secret = require('../secret_ivy.json')
 
 const client = new Client()
 
@@ -38,6 +39,10 @@ client.on('message', (message) => {
                 control.onReceiveClearMsg()
             } else if (message.content.startsWith('$help')) {
                 control.onReceiveHelpMsg(message)
+            } else if (message.content.startsWith('$list')) {
+                control.onReceiveListMsg(message)
+            } else if (message.content.startsWith('$remove')) {
+                control.onReceiveRemoveMsg(message)
             }
             console.log('----------------')
         }
